@@ -33,7 +33,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '24'
+          node-version: '20'
           cache: 'npm'
 
       - name: Install Python Dependencies
@@ -55,7 +55,7 @@ jobs:
         run: |
           if [ -f package.json ]; then
             npx prettier --write .
-            npx eslint . --fix || true
+            npx --no-install eslint . --fix || true
           fi
 
       - name: Commit and push auto-fixes
@@ -123,7 +123,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '24'
+          node-version: '20'
           cache: 'npm'
 
       - name: Install Frontend Dependencies
@@ -136,7 +136,7 @@ jobs:
 
       - name: Run ESLint (Linter)
         run: |
-          if [ -f package.json ]; then npx eslint .; fi
+          if [ -f package.json ]; then npx --no-install eslint .; fi
 
       - name: Run TypeScript Compiler (Type Check)
         run: |
