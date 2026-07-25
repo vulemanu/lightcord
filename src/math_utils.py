@@ -1,7 +1,7 @@
 """Module providing basic mathematical utility functions."""
 
 
-def add_numbers(a: int, b: int)->int:
+def add_numbers(a: int, b: int) -> int:
     """Add two integers and return the result.
 
     :param a: First integer
