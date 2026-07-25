@@ -46,16 +46,30 @@ jobs:
         run: |
           if [ -f package-lock.json ]; then npm ci; fi
 
+      # Get list of changed frontend files
+      - name: Get changed frontend files
+        id: changed-frontend
+        uses: tj-actions/changed-files@v44
+        with:
+          files: |
+            **/*.{js,jsx,ts,tsx,json,css,scss,md}
+
       - name: Auto-fix Python issues
         run: |
           ruff check . --fix || true
           autopep8 -r -i . || true
 
-      - name: Auto-fix frontend issues
+      - name: Auto-fix frontend issues on changed files
+        if: steps.changed-frontend.outputs.any_changed == 'true'
         run: |
           if [ -f package.json ]; then
-            npx prettier --write .
-            npx --no-install eslint . --fix || true
+            npx prettier --write ${{ steps.changed-frontend.outputs.all_changed_files }}
+            
+            # Extract only JS/TS files for ESLint
+            JS_TS_FILES=$(echo "${{ steps.changed-frontend.outputs.all_changed_files }}" | tr ' ' '\n' | grep -E '\.(js|jsx|ts|tsx)$' | tr '\n' ' ' || true)
+            if [ -n "$JS_TS_FILES" ]; then
+              npx --no-install eslint $JS_TS_FILES --fix || true
+            fi
           fi
 
       - name: Commit and push auto-fixes
@@ -119,6 +133,8 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -130,14 +146,32 @@ jobs:
         run: |
           if [ -f package-lock.json ]; then npm ci; fi
 
-      - name: Run Prettier (Format Check)
-        run: |
-          if [ -f package.json ]; then npx prettier --check .; fi
+      # Fetch changed files in frontend-ci
+      - name: Get changed frontend files
+        id: changed-frontend
+        uses: tj-actions/changed-files@v44
+        with:
+          files: |
+            **/*.{js,jsx,ts,tsx,json,css,scss,md}
 
-      - name: Run ESLint (Linter)
+      - name: Run Prettier (Format Check on changed files)
+        if: steps.changed-frontend.outputs.any_changed == 'true'
         run: |
-          if [ -f package.json ]; then npx --no-install eslint .; fi
+          if [ -f package.json ]; then
+            npx prettier --check ${{ steps.changed-frontend.outputs.all_changed_files }}
+          fi
 
+      - name: Run ESLint (Linter on changed files)
+        if: steps.changed-frontend.outputs.any_changed == 'true'
+        run: |
+          if [ -f package.json ]; then
+            JS_TS_FILES=$(echo "${{ steps.changed-frontend.outputs.all_changed_files }}" | tr ' ' '\n' | grep -E '\.(js|jsx|ts|tsx)$' | tr '\n' ' ' || true)
+            if [ -n "$JS_TS_FILES" ]; then
+              npx --no-install eslint $JS_TS_FILES
+            fi
+          fi
+
+      # TypeScript check stays global because type integrity spans files
       - name: Run TypeScript Compiler (Type Check)
         run: |
           if [ -f package.json ]; then npx tsc --noEmit; fi
