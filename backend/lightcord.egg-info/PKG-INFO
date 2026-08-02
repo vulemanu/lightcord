@@ -1,0 +1,11 @@
+Metadata-Version: 2.4
+Name: lightcord
+Version: 0.1.0
+Requires-Dist: django
+Requires-Dist: djangorestframework
+Requires-Dist: channels
+Requires-Dist: daphne
+Requires-Dist: celery
+Requires-Dist: redis
+Requires-Dist: channels-redis
+Requires-Dist: psycopg[binary]
