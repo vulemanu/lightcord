@@ -1,0 +1,8 @@
+django
+djangorestframework
+channels
+daphne
+celery
+redis
+channels-redis
+psycopg[binary]

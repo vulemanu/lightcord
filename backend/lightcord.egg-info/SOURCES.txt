@@ -1,0 +1,11 @@
+pyproject.toml
+config/__init__.py
+config/asgi.py
+config/settings.py
+config/urls.py
+config/wsgi.py
+lightcord.egg-info/PKG-INFO
+lightcord.egg-info/SOURCES.txt
+lightcord.egg-info/dependency_links.txt
+lightcord.egg-info/requires.txt
+lightcord.egg-info/top_level.txt
