@@ -28,3 +28,6 @@ build/
 # OS Generated
 .DS_Store
 Thumbs.db
+
+# env
+.env
