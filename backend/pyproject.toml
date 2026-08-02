@@ -2,6 +2,20 @@
 requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
+[project]
+name = "lightcord"
+version = "0.1.0"
+dependencies = [
+    "django",
+    "djangorestframework",
+    "channels",
+    "daphne",
+    "celery",
+    "redis",
+    "channels-redis",
+    "psycopg[binary]",
+]
+
 [tool.pytest.ini_options]
 pythonpath = "."
 
